@@ -1,1 +1,1 @@
-![image](https://github.com/AnanyaDBJ/aws-db-agent-workshop/tree/9d027edbb8b21cc2bd912c56724daccadddfc208/workshop-code/reference-architecture-images/agentic_architecture.png)
+![agentic_architecture](https://github.com/user-attachments/assets/75c01a94-93e4-4188-b0f8-504f0c0f9e26)
