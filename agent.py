@@ -46,7 +46,10 @@ system_prompt = "You are an intelligent financial portfolio conversational assis
 tools = []
 
 # You can use UDFs in Unity Catalog as agent tools
-uc_tool_names = ["ananyaroy.finops.*"]
+# TODO change the catalog name here
+catalog = "ananyaroy"
+schema = "agent_workshop"
+uc_tool_names = [f"{catalog}.{schema}.*"]
 uc_toolkit = UCFunctionToolkit(function_names=uc_tool_names)
 tools.extend(uc_toolkit.tools)
 
@@ -68,7 +71,6 @@ tools.extend(uc_toolkit.tools)
 #####################
 ## Define agent logic
 #####################
-
 
 def create_tool_calling_agent(
     model: LanguageModelLike,

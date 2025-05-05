@@ -21,6 +21,19 @@
 
 # COMMAND ----------
 
+#Define the catalog name for each user 
+user_email = dbutils.notebook.entry_point.getDbutils().notebook().getContext().userName().get() 
+email = str(user_email).split('@')
+catalog = email[0].replace('.','')
+
+schema = "agent_workshop"
+VS_INDEX_NAME = f"{catalog}.{schema}.guidance_gold_index"
+
+model_name = "financial_assistance_agent"
+UC_MODEL_NAME = f"{catalog}.{schema}.{model_name}"
+
+# COMMAND ----------
+
 # MAGIC %md ## Define the agent in code
 # MAGIC Below we define our agent code in a single cell, enabling us to easily write it to a local Python file for subsequent logging and deployment using the `%%writefile` magic command.
 # MAGIC
@@ -77,7 +90,10 @@
 # MAGIC tools = []
 # MAGIC
 # MAGIC # You can use UDFs in Unity Catalog as agent tools
-# MAGIC uc_tool_names = ["ananyaroy.finops.*"]
+# MAGIC # TODO change the catalog name here
+# MAGIC catalog = "ananyaroy"
+# MAGIC schema = "agent_workshop"
+# MAGIC uc_tool_names = [f"{catalog}.{schema}.*"]
 # MAGIC uc_toolkit = UCFunctionToolkit(function_names=uc_tool_names)
 # MAGIC tools.extend(uc_toolkit.tools)
 # MAGIC
@@ -99,7 +115,6 @@
 # MAGIC #####################
 # MAGIC ## Define agent logic
 # MAGIC #####################
-# MAGIC
 # MAGIC
 # MAGIC def create_tool_calling_agent(
 # MAGIC     model: LanguageModelLike,
@@ -233,10 +248,6 @@ for event in AGENT.predict_stream(
 
 # COMMAND ----------
 
-resources
-
-# COMMAND ----------
-
 # Determine Databricks resources to specify for automatic auth passthrough at deployment time
 import mlflow
 from agent import tools, LLM_ENDPOINT_NAME
@@ -250,11 +261,9 @@ from mlflow.models.resources import (
     DatabricksFunction
 )
 
-VS_ENDPOINT_NAME = "ananyaroy.finOps.guidance_gold_index"
-
 # TODO: Manually include underlying resources if needed. See the TODO in the markdown above for more information.
 resources = [DatabricksServingEndpoint(endpoint_name=LLM_ENDPOINT_NAME),
-             DatabricksVectorSearchIndex(index_name=VS_ENDPOINT_NAME),
+             DatabricksVectorSearchIndex(index_name=VS_INDEX_NAME),
              ]
 for tool in tools:
     if isinstance(tool, VectorSearchRetrieverTool):
@@ -305,13 +314,9 @@ mlflow.models.predict(
 
 # COMMAND ----------
 
-mlflow.set_registry_uri("databricks-uc")
+import mlflow 
 
-# TODO: define the catalog, schema, and model name for your UC model
-catalog = "ananyaroy"
-schema = "finOps"
-model_name = "financial_assistance_agent"
-UC_MODEL_NAME = f"{catalog}.{schema}.{model_name}"
+mlflow.set_registry_uri("databricks-uc")
 
 # register the model to UC
 uc_registered_model_info = mlflow.register_model(
@@ -326,7 +331,10 @@ uc_registered_model_info = mlflow.register_model(
 # COMMAND ----------
 
 from databricks import agents
-agents.deploy(UC_MODEL_NAME, uc_registered_model_info.version, tags = {"endpointSource": "playground"})
+agents.deploy(UC_MODEL_NAME, 
+              uc_registered_model_info.version, 
+              tags = {"endpointSource": "playground"}
+              )
 
 # COMMAND ----------
 
