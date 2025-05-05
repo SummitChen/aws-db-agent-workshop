@@ -1,18 +1,8 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC #Tool-calling Agent
+# MAGIC #LangGraph Tool Calling Agent
 # MAGIC
-# MAGIC This is an auto-generated notebook created by an AI Playground export.
-# MAGIC
-# MAGIC This notebook uses [Mosaic AI Agent Framework](https://docs.databricks.com/generative-ai/agent-framework/build-genai-apps.html) to recreate your agent from the AI Playground. It  demonstrates how to develop, manually test, evaluate, log, and deploy a tool-calling agent in LangGraph.
-# MAGIC
-# MAGIC The agent code implements [MLflow's ChatAgent](https://mlflow.org/docs/latest/python_api/mlflow.pyfunc.html#mlflow.pyfunc.ChatAgent) interface, a Databricks-recommended open-source standard that simplifies authoring multi-turn conversational agents, and is fully compatible with Mosaic AI agent framework functionality.
-# MAGIC
-# MAGIC  **_NOTE:_**  This notebook uses LangChain, but AI Agent Framework is compatible with any agent authoring framework, including LlamaIndex or pure Python agents written with the OpenAI SDK.
-# MAGIC
-# MAGIC ## Prerequisites
-# MAGIC
-# MAGIC - Address all `TODO`s in this notebook.
+# MAGIC This notebook creates a multi-turn conversational agent for portfolio Assessment and Fraud Analysis for customer. The architecture framework is LangGraph . We are using LangGraoh tool calling agent to create a conversational agent with history.
 
 # COMMAND ----------
 
@@ -22,9 +12,9 @@
 # COMMAND ----------
 
 #Define the catalog name for each user 
-user_email = dbutils.notebook.entry_point.getDbutils().notebook().getContext().userName().get() 
-email = str(user_email).split('@')
-catalog = email[0].replace('.','')
+workspace_url = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiUrl().get()
+digits = ''.join(filter(str.isdigit, workspace_url))
+catalog = 'catalog_' + digits
 
 schema = "agent_workshop"
 VS_INDEX_NAME = f"{catalog}.{schema}.guidance_gold_index"
@@ -76,10 +66,10 @@ UC_MODEL_NAME = f"{catalog}.{schema}.{model_name}"
 # MAGIC ############################################
 # MAGIC # Define your LLM endpoint and system prompt
 # MAGIC ############################################
-# MAGIC LLM_ENDPOINT_NAME = "databricks-claude-3-7-sonnet"
+# MAGIC LLM_ENDPOINT_NAME = "<databricks model serving endpoint name>"
 # MAGIC llm = ChatDatabricks(endpoint=LLM_ENDPOINT_NAME)
 # MAGIC
-# MAGIC system_prompt = "You are an intelligent financial portfolio conversational assistant and fraud support agent. You have multiple tools at your dispposal to use and answer user queries.Read all the capabilities of each tool and make informed decision of what tools to use based on user question. Do not make things on your own if you don't know anything. You also can perform actions based on user need. "
+# MAGIC system_prompt = "You are an intelligent financial portfolio conversational assistant and fraud support agent. You have multiple tools at your dispposal to use and answer user queries.Read all the capabilities of each tool and make informed decision of what tools to use based on user question. Do not make things on your own if you don't know anything. You also can perform actions based on user need. If customer has not provided with customer Id , authenticate customers first with first name , last name and postcode before the first conversation"
 # MAGIC
 # MAGIC ###############################################################################
 # MAGIC ## Define tools for your agent, enabling it to retrieve data or take actions
@@ -91,7 +81,7 @@ UC_MODEL_NAME = f"{catalog}.{schema}.{model_name}"
 # MAGIC
 # MAGIC # You can use UDFs in Unity Catalog as agent tools
 # MAGIC # TODO change the catalog name here
-# MAGIC catalog = "ananyaroy"
+# MAGIC catalog = "<catalog name>"
 # MAGIC schema = "agent_workshop"
 # MAGIC uc_tool_names = [f"{catalog}.{schema}.*"]
 # MAGIC uc_toolkit = UCFunctionToolkit(function_names=uc_tool_names)
@@ -212,11 +202,11 @@ UC_MODEL_NAME = f"{catalog}.{schema}.{model_name}"
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Test the agent
+# MAGIC ## Test the agent locally
 # MAGIC
 # MAGIC Interact with the agent to test its output. Since this notebook called `mlflow.langchain.autolog()` you can view the trace for each step the agent takes.
 # MAGIC
-# MAGIC Replace this placeholder input with an appropriate domain-specific example for your agent.
+# MAGIC Because we are working with a Fraud Analyst agent 
 
 # COMMAND ----------
 
@@ -230,6 +220,8 @@ AGENT.predict({"messages": [{"role": "user",
                              "content": "hi my customer id is CUST001 , how many transactions I have done so far and can you see and fraudulent acitivty on any of those ? "}]})
 
 # COMMAND ----------
+
+from agent import AGENT
 
 for event in AGENT.predict_stream(
     {"messages": [{"role": "user", 
