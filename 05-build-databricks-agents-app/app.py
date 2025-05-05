@@ -27,7 +27,7 @@ if "visibility" not in st.session_state:
 
 st.title("🧱 Chatbot App")
 st.markdown(
-    "ℹ️ This is a simple example. See "
+    "ℹ️ This is a simple streamlit example for the app. See "
     "[Databricks docs](https://docs.databricks.com/aws/en/generative-ai/agent-framework/chat-app) "
     "for a more comprehensive example with streaming output and more."
 )
