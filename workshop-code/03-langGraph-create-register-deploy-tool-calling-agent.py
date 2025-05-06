@@ -88,20 +88,6 @@ UC_MODEL_NAME = f"{catalog}.{schema}.{model_name}"
 # MAGIC tools.extend(uc_toolkit.tools)
 # MAGIC
 # MAGIC
-# MAGIC # # (Optional) Use Databricks vector search indexes as tools
-# MAGIC # # See https://docs.databricks.com/generative-ai/agent-framework/unstructured-retrieval-tools.html
-# MAGIC # # for details
-# MAGIC #
-# MAGIC # # TODO: Add vector search indexes as tools or delete this block
-# MAGIC # vector_search_tools = [
-# MAGIC #         VectorSearchRetrieverTool(
-# MAGIC #         index_name="",
-# MAGIC #         # filters="..."
-# MAGIC #     )
-# MAGIC # ]
-# MAGIC # tools.extend(vector_search_tools)
-# MAGIC
-# MAGIC
 # MAGIC #####################
 # MAGIC ## Define agent logic
 # MAGIC #####################
