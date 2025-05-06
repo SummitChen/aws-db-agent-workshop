@@ -25,11 +25,9 @@ if "visibility" not in st.session_state:
     st.session_state.visibility = "visible"
     st.session_state.disabled = False
 
-st.title("🧱 Chatbot App")
+st.title("Financial Wealth Intelligence Assistant")
 st.markdown(
-    "ℹ️ This is a simple streamlit example for the app. See "
-    "[Databricks docs](https://docs.databricks.com/aws/en/generative-ai/agent-framework/chat-app) "
-    "for a more comprehensive example with streaming output and more."
+    "Assists customers with understanding, optimising, and protecting their investment portfolios"
 )
 
 # Initialize chat history
