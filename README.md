@@ -18,6 +18,7 @@ Clone the repository in your respective provisioned databricks workspaces:
 Proceed with cloning the repository in Databricks Workspace: 
 
 git clone https://github.com/AnanyaDBJ/aws-db-agent-workshop.git
+
 cd aws-db-agent-workshop
 
 ## Repository Structure
