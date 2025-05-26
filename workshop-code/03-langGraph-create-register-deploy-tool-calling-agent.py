@@ -236,7 +236,6 @@ from mlflow.models.resources import (
     DatabricksGenieSpace,
     DatabricksServingEndpoint,
     DatabricksVectorSearchIndex,
-    DatabricksFunction
 )
 
 # TODO: Manually include underlying resources if needed. See the TODO in the markdown above for more information.
